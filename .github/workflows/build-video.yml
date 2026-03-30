@@ -36,7 +36,7 @@ jobs:
       - name: Build WebM Video (60FPS HD)
         run: |
           mkdir -p docs
-          npx remotion render src/index.ts CinematicPortfolio docs/showcase.webm --codec=webm --fps=60 --width=1920 --height=1080
+          npx remotion render src/index.ts CinematicPortfolio docs/showcase.webm --codec=vp8 --fps=60 --width=1920 --height=1080
 
       - name: Commit and Push generated video
         run: |
