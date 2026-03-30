@@ -37,7 +37,7 @@ pnpm run dev
 **Render video locally**
 
 ```console
-npx remotion render src/index.ts CinematicPortfolio docs/showcase.webm --codec=webm --fps=60 --width=1920 --height=1080
+npx remotion render src/index.ts CinematicPortfolio docs/showcase.webm --codec=vp8 --fps=60 --width=1920 --height=1080
 ```
 
 **Upgrade Remotion**
