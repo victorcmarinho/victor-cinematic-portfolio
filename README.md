@@ -1,7 +1,7 @@
 # Victor Cinematic Portfolio
 
 <p align="center">
-<video src="https://github.com/victorcmarinho/victor-cinematic-portfolio/raw/main/docs/showcase.webm" autoplay loop muted playsinline width="100%"></video>
+<video src="https://github.com/victorcmarinho/victor-cinematic-portfolio/raw/main/docs/showcase.mp4" autoplay loop muted playsinline width="100%"></video>
 </p>
 
 This is a **high-end, 60fps cinematic "Product Reveal"** video built in React using [Remotion](https://www.remotion.dev/). It showcases the portfolio website using a dynamic, prop-driven 3D macro-sequence architecture with spring physics, glassmorphic effects, and Apple-style minimalistic styling.
@@ -37,7 +37,7 @@ pnpm run dev
 **Render video locally**
 
 ```console
-npx remotion render src/index.ts CinematicPortfolio docs/showcase.webm --codec=vp8 --fps=60 --width=1920 --height=1080
+npx remotion render src/index.ts CinematicPortfolio docs/showcase.mp4 --codec=h264 --fps=60 --width=1920 --height=1080
 ```
 
 **Upgrade Remotion**
