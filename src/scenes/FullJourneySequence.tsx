@@ -1,48 +1,60 @@
 import React from 'react';
-import { interpolate, useCurrentFrame, Sequence } from 'remotion';
-import { HeroRender } from '../components/HeroRender';
-import { AboutRender } from '../components/AboutRender';
-import { SkillsRender } from '../components/SkillsRender';
-import { ExperienceRender } from '../components/ExperienceRender';
-import { ProjectsRender } from '../components/ProjectsRender';
-import { FooterRender } from '../components/FooterRender';
+import { interpolate, useCurrentFrame } from 'remotion';
+import { HeroScene } from './HeroScene';
+import { AboutScene } from './AboutScene';
+import { ExperienceScene } from './ExperienceScene';
+import { SkillsScene } from './SkillsScene';
+import { ProjectsScene } from './ProjectsScene';
+import { FooterScene } from './FooterScene';
+import { CinematicProps } from '../config/cinematicConfig';
 
-export const FullJourneySequence: React.FC = () => {
+export const FullJourneySequence: React.FC<CinematicProps> = (props) => {
   const frame = useCurrentFrame();
 
-  // --- Global Camera Choreography ---
-  // Calculates estimated Y positions to center elements within the view
-  const scrollY = interpolate(
-    frame,
-    [
-      0, 480,            // Hero (Center ~400px)
-      600, 840,          // About (Center ~1089px)
-      960, 1320,         // Experience (Center ~1978px)
-      1440, 1680,        // Skills (Center ~2817px)
-      1800, 2160,        // Projects (Center ~3606px)
-      2280, 2460,        // Footer (Center ~4320px)
-      2580,              // Zoom Out (Reset Y)
-      3000               // Final Scroll
-    ],
-    [
-      140, 140,
-      -549, -549,
-      -1438, -1438,
-      -2277, -2277,
-      -3066, -3066,
-      -3780, -3780,
-      200,
-      -2200 
-    ],
-    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+  const scrollYInput = [
+    props.scenes.hero.startFrame, props.scenes.hero.startFrame + props.scenes.hero.durationInFrames,
+    props.scenes.about.startFrame, props.scenes.about.startFrame + props.scenes.about.durationInFrames,
+    props.scenes.experience.startFrame, props.scenes.experience.startFrame + props.scenes.experience.durationInFrames,
+    props.scenes.skills.startFrame, props.scenes.skills.startFrame + props.scenes.skills.durationInFrames,
+    props.scenes.projects.startFrame, props.scenes.projects.startFrame + props.scenes.projects.durationInFrames,
+    props.scenes.footer.startFrame, props.scenes.footer.startFrame + props.scenes.footer.durationInFrames,
+    props.effects.zoomOutStartFrame,
+    props.globalDuration
+  ];
+
+  const scrollYOutput = [
+    props.scenes.hero.scrollYOffset, props.scenes.hero.scrollYOffset,
+    props.scenes.about.scrollYOffset, props.scenes.about.scrollYOffset,
+    props.scenes.experience.scrollYOffset, props.scenes.experience.scrollYOffset,
+    props.scenes.skills.scrollYOffset, props.scenes.skills.scrollYOffset,
+    props.scenes.projects.scrollYOffset, props.scenes.projects.scrollYOffset,
+    props.scenes.footer.scrollYOffset, props.scenes.footer.scrollYOffset,
+    200, 
+    props.effects.finalScrollY
+  ];
+
+  const scrollY = interpolate(frame, scrollYInput, scrollYOutput, { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+
+  const endOfFooter = props.scenes.footer.startFrame + props.scenes.footer.durationInFrames;
+
+  const scale = interpolate(
+    frame, 
+    [0, endOfFooter, props.effects.zoomOutStartFrame, props.globalDuration], 
+    [props.effects.baseScale, props.effects.baseScale, props.effects.zoomOutScale, props.effects.zoomOutScale], 
+    { extrapolateRight: 'clamp' }
   );
 
-  // Zoom scale multiplier (2.0 during reveals to fill 4K screen, zooms out to 0.8 at 43s)
-  const scale = interpolate(frame, [0, 2460, 2580, 3000], [2.0, 2.0, 0.8, 0.8], { extrapolateRight: 'clamp' });
+  const rotationStart = Math.max(0, props.scenes.hero.startFrame + props.scenes.hero.durationInFrames - 60);
   
-  // 3D tilt
-  const rotateX = interpolate(frame, [420, 2460, 2580, 3000], [0, 12, 10, 5], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
-  const rotateY = interpolate(frame, [420, 2460, 2580, 3000], [0, -6, 2, -2], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+  const rotateXInput = [
+    rotationStart,
+    endOfFooter,
+    props.effects.zoomOutStartFrame,
+    props.globalDuration
+  ];
+  
+  const rotateX = interpolate(frame, rotateXInput, [0, 12, 10, 5], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+  const rotateY = interpolate(frame, rotateXInput, [0, -6, 2, -2], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
 
   return (
     <div 
@@ -52,36 +64,19 @@ export const FullJourneySequence: React.FC = () => {
       <div
         style={{
           transform: `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${scrollY}px)`,
-          width: '1920px', // Standard desktop bounding box wrapper to be scaled up
+          width: '1920px', 
           transformOrigin: 'top center',
           transformStyle: 'preserve-3d',
           zIndex: 10,
         }}
       >
         <main className="w-full flex items-center justify-center flex-col gap-16 py-16 px-6 relative">
-          <Sequence name="Hero" layout="none">
-            <HeroRender />
-          </Sequence>
-
-          <Sequence from={600} name="About" layout="none">
-            <AboutRender />
-          </Sequence>
-          
-          <Sequence from={960} name="Experience" layout="none">
-            <ExperienceRender />
-          </Sequence>
-
-          <Sequence from={1440} name="Skills" layout="none">
-            <SkillsRender />
-          </Sequence>
-
-          <Sequence from={1800} name="Projects" layout="none">
-            <ProjectsRender />
-          </Sequence>
-
-          <Sequence from={2280} name="Footer" layout="none">
-            <FooterRender />
-          </Sequence>
+          <HeroScene config={props.scenes.hero} />
+          <AboutScene config={props.scenes.about} />
+          <ExperienceScene config={props.scenes.experience} />
+          <SkillsScene config={props.scenes.skills} />
+          <ProjectsScene config={props.scenes.projects} />
+          <FooterScene config={props.scenes.footer} />
         </main>
       </div>
     </div>
