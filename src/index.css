@@ -2,10 +2,26 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #000000;
-  color: white;
+@layer base {
+  :root {
+    --color-bg: #09090b;
+    --color-text: #fafafa;
+    --color-primary: #818cf8;
+    --color-muted: #a1a1aa;
+    --color-border: #27272a;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }

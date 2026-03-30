@@ -14,6 +14,9 @@ importers:
       '@remotion/tailwind-v4':
         specifier: 4.0.441
         version: 4.0.441(@remotion/bundler@4.0.441(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(webpack@5.105.0)
+      '@remotion/zod-types':
+        specifier: 4.0.441
+        version: 4.0.441(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(zod@4.3.6)
       react:
         specifier: 19.2.3
         version: 19.2.3
@@ -26,6 +29,9 @@ importers:
       tailwindcss:
         specifier: 4.0.0
         version: 4.0.0
+      zod:
+        specifier: 4.3.6
+        version: 4.3.6
     devDependencies:
       '@remotion/eslint-config-flat':
         specifier: 4.0.441
