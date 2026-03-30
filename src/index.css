@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --color-bg: #09090b;
-    --color-text: #fafafa;
-    --color-primary: #818cf8;
-    --color-muted: #a1a1aa;
-    --color-border: #27272a;
+    --color-bg: #fdfdfd;
+    --color-text: #171717;
+    --color-primary: #2563eb;
+    --color-muted: #52525b;
+    --color-border: #e4e4e7;
   }
 
   body {

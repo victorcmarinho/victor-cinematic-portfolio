@@ -1,90 +1,83 @@
 import React from 'react';
+import { useCurrentFrame, spring, useVideoConfig, interpolate } from 'remotion';
 
-export interface ExperienceRenderProps {
-  opacity?: number;
-  translateY?: number;
-}
+export const ExperienceRender: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
 
-const experiences = [
-  {
-    role: "Engenheiro de Software Sênior (iOS)",
-    company: "Reclame AQUI",
-    duration: "mar de 2025 - o momento",
-    description: "Atuando como desenvolvedor iOS no time de aplicativos focados no consumidor, criando e mantendo experiências mobile de alto impacto para milhões de usuários.",
-  },
-  {
-    role: "Engenheiro de Software Pleno (iOS)",
-    company: "Reclame AQUI",
-    duration: "nov de 2022 - mar de 2025",
-    description: "Atuando como desenvolvedor iOS no time de aplicativos focados no consumidor, criando e mantendo experiências mobile de alto impacto para milhões de usuários.",
-  },
-  {
-    role: "Desenvolvedor Front-end Sênior",
-    company: "Zappts",
-    duration: "mai de 2021 - nov de 2022",
-    description: "Fui Tech Lead em um projeto para a Getnet Brasil e atuei como Front-end Sênior em projetos para a Porto Seguro. Conduzi equipes, defini arquiteturas e garanti a entrega técnica em clientes Enterprise.",
-  },
-  {
-    role: "Desenvolvedor Front-end / Mobile Pleno",
-    company: "Zappts",
-    duration: "mai de 2020 - nov de 2022",
-    description: "Desenvolvimento de soluções web e mobile (Angular, React Native) escaláveis para grandes clientes (Enterprise).",
-  },
-  {
-    role: "Desenvolvedor Front-end / Mobile Júnior",
-    company: "Hipr Sistemas",
-    duration: "out de 2018 - mai de 2020",
-    description: "Desenvolvimento do App Hipr Vendas em React Native, e do ERP (módulo web) e PDV utilizando Angular 7+, focando em estabilidade e performance no varejo.",
-  },
-  {
-    role: "Desenvolvedor Web Autônomo",
-    company: "Autônomo",
-    duration: "ago de 2017 - mai de 2020",
-    description: "Desenvolvimento full-stack de land pages, sistemas web e e-commerces, atendendo clientes direta e indiretamente, lidando com requisitos de negócios e implantação.",
-  },
-];
+  const experiences = [
+    {
+      role: 'Engenheiro de software sênior',
+      company: 'Reclame AQUI',
+      period: '2025 - Presente',
+      description: 'Atuando na equipe de desenvolvimento de software do Reclame Aqui com as tecnologias React, Next.js e Node.js;',
+    },
+    {
+      role: 'Engenheiro de software Pleno',
+      company: 'Reclame AQUI',
+      period: '2022 - 2025',
+      description: 'Atuando na equipe de desenvolvimento de software do Reclame Aqui com as tecnologias React, Next.js e Node.js;',
+    },
+    {
+      role: 'Desenvolvedor de front-end Senior',
+      company: 'Zappts',
+      period: '2021 - 2022',
+      description: 'Liderança técnica e desenvolvimento focado em escalabilidade.',
+    },
+    {
+      role: 'Desenvolvedor de front-end',
+      company: 'Zappts',
+      period: '2020 - 2022',
+      description: 'Desenvolvimento e design das soluções white-label de e-commerce e integrações.',
+    },
+    {
+      role: 'Desenvolvedor de front-end',
+      company: 'Hipr Sistemas',
+      period: '2018 - 2020',
+      description: 'Desenvolvimento de interfaces e aplicações front-end.',
+    }
+  ];
 
-export const ExperienceRender: React.FC<ExperienceRenderProps> = ({
-  opacity = 1,
-  translateY = 0,
-}) => {
+  const titleOpacity = interpolate(frame, [0, 15], [0, 1], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+
   return (
-    <section
-      id="experience"
-      className="py-20 border-t border-[var(--color-border)] w-full max-w-7xl mx-auto"
-      style={{
-        opacity,
-        transform: `translateY(${translateY}px)`,
-      }}
-      aria-labelledby="experience-heading"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start px-8">
-        <div className="md:col-span-4">
-          <h2
-            id="experience-heading"
-            className="text-3xl font-bold tracking-tight text-[var(--color-text)]"
-          >
-            Experiência
-          </h2>
-        </div>
-        <div className="md:col-span-8 space-y-12">
-          {experiences.map((exp, index) => (
-            <article key={index} className="group relative flex flex-col gap-2 pb-1">
-              <h3 className="text-xl font-semibold text-[var(--color-text)]">
-                {exp.role}
-              </h3>
-              <div className="flex items-center justify-between text-sm text-[var(--color-muted)]">
-                <span className="font-medium text-[var(--color-primary)]">
-                  {exp.company}
+    <section className="py-24 w-full max-w-7xl mx-auto">
+      <h2
+        className="text-3xl md:text-4xl font-bold mb-12 text-[var(--color-text)]"
+        style={{ opacity: titleOpacity }}
+      >
+        Experiência
+      </h2>
+      <div className="space-y-12 border-l-2 border-[var(--color-border)] ml-4 sm:ml-6 relative">
+        {experiences.map((exp, index) => {
+          // Stagger each item by 8 frames
+          const itemFrame = Math.max(0, frame - 15 - (index * 8));
+          const opacity = interpolate(itemFrame, [0, 15], [0, 1], { extrapolateRight: 'clamp' });
+          const translateY = interpolate(itemFrame, [0, 15], [30, 0], { extrapolateRight: 'clamp' });
+          const scale = spring({ frame: itemFrame, fps, config: { damping: 14 } });
+
+          return (
+            <div
+              key={index}
+              className="relative pl-8 sm:pl-10"
+              style={{ opacity, transform: `translateY(${translateY}px)` }}
+            >
+              <div
+                className="absolute w-4 h-4 rounded-full bg-[var(--color-primary)] -left-[9px] top-1.5 shadow-sm"
+                style={{ transform: `scale(${scale})` }}
+              />
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-2">
+                <h3 className="text-xl font-semibold text-[var(--color-text)]">
+                  {exp.role} <span className="text-[var(--color-primary)]">@ {exp.company}</span>
+                </h3>
+                <span className="text-sm font-medium text-[var(--color-muted)] mt-1 sm:mt-0 font-mono bg-[var(--color-border)] px-2 py-1 rounded-md">
+                  {exp.period}
                 </span>
-                <span>{exp.duration}</span>
               </div>
-              <p className="mt-2 text-[var(--color-muted)] leading-relaxed font-light text-base">
-                {exp.description}
-              </p>
-            </article>
-          ))}
-        </div>
+              <p className="text-[var(--color-muted)] leading-relaxed">{exp.description}</p>
+            </div>
+          );
+        })}
       </div>
     </section>
   );

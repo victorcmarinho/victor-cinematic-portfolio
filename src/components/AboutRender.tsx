@@ -1,47 +1,39 @@
 import React from 'react';
+import { useCurrentFrame, interpolate } from 'remotion';
 
-export interface AboutRenderProps {
-  opacity?: number;
-  translateY?: number;
-}
+export const AboutRender: React.FC = () => {
+  const frame = useCurrentFrame();
 
-export const AboutRender: React.FC<AboutRenderProps> = ({
-  opacity = 1,
-  translateY = 0,
-}) => {
+  const h2Opacity = interpolate(frame, [0, 20], [0, 1], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+  const h2Y = interpolate(frame, [0, 20], [20, 0], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+
+  const p1Opacity = interpolate(frame, [10, 30], [0, 1], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+  const p1Y = interpolate(frame, [10, 30], [20, 0], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+
+  const p2Opacity = interpolate(frame, [20, 40], [0, 1], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+  const p2Y = interpolate(frame, [20, 40], [20, 0], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+
   return (
-    <section
-      id="about"
-      className="py-20 border-t border-[var(--color-border)] w-full max-w-7xl mx-auto"
-      style={{
-        opacity,
-        transform: `translateY(${translateY}px)`,
-      }}
-      aria-labelledby="about-heading"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start px-8">
-        <div className="md:col-span-5">
-          <h2
-            id="about-heading"
-            className="text-3xl font-bold tracking-tight text-[var(--color-text)]"
-          >
-            Sobre Mim
-          </h2>
-        </div>
-        <div className="md:col-span-7 space-y-6 text-[var(--color-muted)] leading-relaxed text-lg font-light">
-          <p>
-            Sou graduado em Ciência da Computação, com uma sólida formação acadêmica e prática que sustenta minha carreira como desenvolvedor.
-          </p>
-          <p>
-            Com mais de 7 anos de experiência no desenvolvimento de software, atuei em diversas frentes da engenharia, desde a criação de interfaces de usuário imersivas e intuitivas até o desenvolvimento e a arquitetura de sistemas no back-end. Já colaborei tanto com startups inovadoras quanto com grandes empresas corporativas, adaptando-me a diferentes ambientes e escalas de projeto.
-          </p>
-          <p>
-            Atualmente, minha especialidade reside na criação de aplicações para o ecossistema Apple. Além de focar na excelência técnica durante o desenvolvimento, possuo ampla experiência com todo o ciclo de vida do software no ambiente Apple, incluindo conhecimentos profundos sobre os processos de submissão, diretrizes e distribuição na App Store e TestFlight.
-          </p>
-          <p className="font-medium text-[var(--color-text)]">
-            Também possuo certificação Scrum Fundamentals, o que reforça meu compromisso e habilidade em trabalhar de forma eficiente em ambientes ágeis.
-          </p>
-        </div>
+    <section className="py-24 w-full max-w-7xl mx-auto">
+      <h2 
+        className="text-3xl md:text-4xl font-bold mb-8 text-[var(--color-text)]"
+        style={{ opacity: h2Opacity, transform: `translateY(${h2Y}px)` }}
+      >
+        Sobre Mim
+      </h2>
+      <div className="max-w-3xl space-y-6 text-lg text-[var(--color-muted)] leading-relaxed">
+        <p style={{ opacity: p1Opacity, transform: `translateY(${p1Y}px)` }}>
+          Sou um engenheiro de software focado no ecossistema Apple e em tecnologias
+          web modernas. Minha paixão é transformar problemas complexos em
+          experiências elegantes e intuitivas, seja em uma tela do iPhone ou
+          através de uma aplicação web robusta, entregando impacto real desde o
+          primeiro commit até grandes escalas para mais de 1 milhão de usuários.
+        </p>
+        <p style={{ opacity: p2Opacity, transform: `translateY(${p2Y}px)` }}>
+          Com anos de experiência em engenharia de sistemas e desenvolvimento
+          frontend, combino conhecimento técnico profundo arquitetural e de performance. Nos
+          últimos anos, tenho liderado projetos mobile de missão crítica.
+        </p>
       </div>
     </section>
   );

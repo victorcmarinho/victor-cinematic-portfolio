@@ -1,5 +1,5 @@
 import React from 'react';
-import { interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
+import { interpolate, useCurrentFrame, Sequence } from 'remotion';
 import { HeroRender } from '../components/HeroRender';
 import { AboutRender } from '../components/AboutRender';
 import { SkillsRender } from '../components/SkillsRender';
@@ -7,65 +7,32 @@ import { ExperienceRender } from '../components/ExperienceRender';
 import { ProjectsRender } from '../components/ProjectsRender';
 import { FooterRender } from '../components/FooterRender';
 
-// Wrapping each element in a strict 1080p container guarantees exact positioning
-const SectionWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div className="w-full flex items-center justify-center flex-shrink-0" style={{ height: '1080px' }}>
-    {children}
-  </div>
-);
-
 export const FullJourneySequence: React.FC = () => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-
-  // --- Hero Timings (0s - 8s) ---
-  const isWireframe = frame < 120;
-  const profileScale = spring({ frame: frame - 120, fps, config: { damping: 12, stiffness: 100, mass: 0.8 } });
-  const heroTextOpacity = interpolate(frame, [240, 320], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const heroGlassOpacity = spring({ frame: Math.max(0, frame - 380), fps, config: { damping: 200, stiffness: 80 } });
-
-  // --- About Reveal (10s - 14s) ---
-  const aboutOpacity = interpolate(frame, [600, 680], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const aboutY = interpolate(frame, [600, 680], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-
-  // --- Experience Reveal (16s - 22s) ---
-  const expOpacity = interpolate(frame, [960, 1040], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const expY = interpolate(frame, [960, 1040], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-
-  // --- Skills Reveal (24s - 28s) ---
-  const skillsOpacity = interpolate(frame, [1440, 1500], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const skillsY = interpolate(frame, [1440, 1500], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-
-  // --- Projects Reveal (30s - 36s) ---
-  const projOpacity = interpolate(frame, [1800, 1880], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const projY = interpolate(frame, [1800, 1880], [100, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-
-  // --- Footer Reveal (38s - 41s) ---
-  const footerOpacity = interpolate(frame, [2280, 2340], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
-  const footerY = interpolate(frame, [2280, 2340], [50, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
 
   // --- Global Camera Choreography ---
+  // Calculates estimated Y positions to center elements within the view
   const scrollY = interpolate(
     frame,
     [
-      0, 480,            // Hero 
-      600, 840,          // About
-      960, 1320,         // Experience
-      1440, 1680,        // Skills
-      1800, 2160,        // Projects
-      2280, 2460,        // Footer 
+      0, 480,            // Hero (Center ~400px)
+      600, 840,          // About (Center ~1089px)
+      960, 1320,         // Experience (Center ~1978px)
+      1440, 1680,        // Skills (Center ~2817px)
+      1800, 2160,        // Projects (Center ~3606px)
+      2280, 2460,        // Footer (Center ~4320px)
       2580,              // Zoom Out (Reset Y)
       3000               // Final Scroll
     ],
     [
-      0, 0,
-      -1080, -1080,
-      -2160, -2160,
-      -3240, -3240,
-      -4320, -4320,
-      -5400, -5400,
+      140, 140,
+      -549, -549,
+      -1438, -1438,
+      -2277, -2277,
+      -3066, -3066,
+      -3780, -3780,
       200,
-      -3500 
+      -2200 
     ],
     { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
   );
@@ -82,19 +49,6 @@ export const FullJourneySequence: React.FC = () => {
       className="absolute flex items-start justify-center bg-[var(--color-bg)] w-full h-full overflow-hidden text-[var(--color-text)]"
       style={{ perspective: '3000px' }}
     >
-      {/* Background HDR glow mapped to scroll */}
-      <div 
-        className="absolute w-[1600px] h-[1600px] rounded-full blur-[200px] bg-[var(--color-primary)] opacity-10"
-        style={{
-          transform: `translate(
-            ${interpolate(frame, [0, 3000], [-800, 800])}px, 
-            ${interpolate(frame, [0, 3000], [-400, 800])}px
-          )`,
-          opacity: interpolate(frame, [0, 420, 3000], [0.05, 0.15, 0.3]),
-          zIndex: 0
-        }}
-      />
-      
       <div
         style={{
           transform: `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${scrollY}px)`,
@@ -102,41 +56,33 @@ export const FullJourneySequence: React.FC = () => {
           transformOrigin: 'top center',
           transformStyle: 'preserve-3d',
           zIndex: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '0', 
         }}
       >
-        <SectionWrapper>
-          <HeroRender
-            wireframeMode={isWireframe}
-            profileScale={isWireframe ? 1 : profileScale} 
-            textOpacity={isWireframe ? 1 : heroTextOpacity}
-            glassOpacity={heroGlassOpacity}
-          />
-        </SectionWrapper>
+        <main className="w-full flex items-center justify-center flex-col gap-16 py-16 px-6 relative">
+          <Sequence name="Hero" layout="none">
+            <HeroRender />
+          </Sequence>
 
-        <SectionWrapper>
-          <AboutRender opacity={aboutOpacity} translateY={aboutY} />
-        </SectionWrapper>
-        
-        <SectionWrapper>
-          <ExperienceRender opacity={expOpacity} translateY={expY} />
-        </SectionWrapper>
+          <Sequence from={600} name="About" layout="none">
+            <AboutRender />
+          </Sequence>
+          
+          <Sequence from={960} name="Experience" layout="none">
+            <ExperienceRender />
+          </Sequence>
 
-        <SectionWrapper>
-          <SkillsRender opacity={skillsOpacity} translateY={skillsY} />
-        </SectionWrapper>
+          <Sequence from={1440} name="Skills" layout="none">
+            <SkillsRender />
+          </Sequence>
 
-        <SectionWrapper>
-          <ProjectsRender opacity={projOpacity} translateY={projY} />
-        </SectionWrapper>
+          <Sequence from={1800} name="Projects" layout="none">
+            <ProjectsRender />
+          </Sequence>
 
-        <SectionWrapper>
-          <FooterRender opacity={footerOpacity} translateY={footerY} />
-        </SectionWrapper>
-
+          <Sequence from={2280} name="Footer" layout="none">
+            <FooterRender />
+          </Sequence>
+        </main>
       </div>
     </div>
   );

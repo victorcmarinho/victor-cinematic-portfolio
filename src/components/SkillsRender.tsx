@@ -1,57 +1,47 @@
 import React from 'react';
+import { useCurrentFrame, spring, useVideoConfig, interpolate } from 'remotion';
 
-export interface SkillsRenderProps {
-  opacity?: number;
-  translateY?: number;
-}
+export const SkillsRender: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
 
-const skills = [
-  "Swift",
-  "SwiftUI",
-  "UIKit",
-  "React Native",
-  "Flutter",
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Node.js",
-  "Astro",
-  "Tailwind CSS",
-];
+  const skills = [
+    'Swift', 'Kotlin', 'React Native', 'Flutter', 'TypeScript',
+    'Node.js', 'React', 'Next.js', 'TailwindCSS', 'PostgreSQL',
+    'MongoDB', 'Docker', 'AWS', 'CI/CD'
+  ];
 
-export const SkillsRender: React.FC<SkillsRenderProps> = ({
-  opacity = 1,
-  translateY = 0,
-}) => {
+  const titleOpacity = interpolate(frame, [0, 15], [0, 1], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+  const titleY = interpolate(frame, [0, 15], [20, 0], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
+
   return (
-    <section
-      id="skills"
-      className="py-20 border-t border-[var(--color-border)] w-full max-w-7xl mx-auto"
-      style={{
-        opacity,
-        transform: `translateY(${translateY}px)`,
-      }}
-      aria-labelledby="skills-heading"
-    >
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-start px-8">
-        <div className="md:col-span-4">
-          <h2
-            id="skills-heading"
-            className="text-3xl font-bold tracking-tight text-[var(--color-text)]"
-          >
-            Habilidades Principais
-          </h2>
-        </div>
-        <ul className="md:col-span-8 flex flex-wrap gap-3">
-          {skills.map((skill, index) => (
-            <li 
-              key={index} 
-              className="px-5 py-2 border border-[var(--color-border)] text-[var(--color-text)] rounded-full text-sm font-medium hover:bg-[var(--color-border)] hover:text-[var(--color-primary)] cursor-default"
+    <section className="py-24 w-full max-w-7xl mx-auto">
+      <h2 
+        className="text-3xl md:text-4xl font-bold mb-12 text-[var(--color-text)]"
+        style={{ opacity: titleOpacity, transform: `translateY(${titleY}px)` }}
+      >
+        Habilidades Técnicas
+      </h2>
+      <div className="flex flex-wrap gap-4">
+        {skills.map((skill, index) => {
+          // Stagger badges
+          const itemFrame = Math.max(0, frame - 15 - (index * 3));
+          const scale = spring({ frame: itemFrame, fps, config: { damping: 12, stiffness: 120 } });
+          const opacity = interpolate(itemFrame, [0, 10], [0, 1], { extrapolateRight: 'clamp' });
+
+          return (
+            <div
+              key={skill}
+              className="px-6 py-3 bg-[var(--color-border)] text-[var(--color-text)] rounded-full text-base font-medium shadow-sm border border-[var(--color-border)]"
+              style={{
+                transform: `scale(${scale})`,
+                opacity
+              }}
             >
               {skill}
-            </li>
-          ))}
-        </ul>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
