@@ -9,28 +9,28 @@ export const RemotionRoot: React.FC = () => {
       <Composition
         id="CinematicPortfolio"
         component={FullJourneySequence}
-        durationInFrames={3000}
+        durationInFrames={2820}
         fps={60}
         width={3840}
         height={2160}
         schema={cinematicSchema}
         defaultProps={{
           fps: 60,
-          globalDuration: 3000,
+          globalDuration: 2820,
           width: 3840,
           height: 2160,
           scenes: {
-            hero: { startFrame: 0, durationInFrames: 480, scrollYOffset: 140 },
-            about: { startFrame: 600, durationInFrames: 240, scrollYOffset: -549 },
-            experience: { startFrame: 960, durationInFrames: 360, scrollYOffset: -1438 },
-            skills: { startFrame: 1440, durationInFrames: 240, scrollYOffset: -2277 },
-            projects: { startFrame: 1800, durationInFrames: 360, scrollYOffset: -3066 },
-            footer: { startFrame: 2280, durationInFrames: 180, scrollYOffset: -3780 },
+            hero: { startFrame: 0, durationInFrames: 300, scrollYOffset: 140 },
+            about: { startFrame: 420, durationInFrames: 240, scrollYOffset: -2985 },
+            experience: { startFrame: 780, durationInFrames: 360, scrollYOffset: -6310 },
+            skills: { startFrame: 1260, durationInFrames: 240, scrollYOffset: -9585 },
+            projects: { startFrame: 1620, durationInFrames: 360, scrollYOffset: -12540 },
+            footer: { startFrame: 2100, durationInFrames: 180, scrollYOffset: -15960 },
           },
           effects: {
             baseScale: 2.0,
             zoomOutScale: 0.8,
-            zoomOutStartFrame: 2580,
+            zoomOutStartFrame: 2400,
             finalScrollY: -2200,
           }
         }}

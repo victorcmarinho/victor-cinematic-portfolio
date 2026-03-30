@@ -44,18 +44,12 @@ export const FullJourneySequence: React.FC<CinematicProps> = (props) => {
     { extrapolateRight: 'clamp' }
   );
 
-  const rotationStart = Math.max(0, props.scenes.hero.startFrame + props.scenes.hero.durationInFrames - 60);
-  
-  const rotateXInput = [
-    rotationStart,
-    endOfFooter,
-    props.effects.zoomOutStartFrame,
-    props.globalDuration
-  ];
-  
-  const rotateX = interpolate(frame, rotateXInput, [0, 12, 10, 5], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
-  const rotateY = interpolate(frame, rotateXInput, [0, -6, 2, -2], { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' });
-
+  const gap = interpolate(
+    frame,
+    [endOfFooter, props.effects.zoomOutStartFrame],
+    [2500, 32],
+    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' }
+  );
   return (
     <div 
       className="absolute flex items-start justify-center bg-[var(--color-bg)] w-full h-full overflow-hidden text-[var(--color-text)]"
@@ -63,14 +57,17 @@ export const FullJourneySequence: React.FC<CinematicProps> = (props) => {
     >
       <div
         style={{
-          transform: `scale(${scale}) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${scrollY}px)`,
+          transform: `scale(${scale}) translateY(${scrollY}px)`,
           width: '1920px', 
           transformOrigin: 'top center',
           transformStyle: 'preserve-3d',
           zIndex: 10,
         }}
       >
-        <main className="w-full flex items-center justify-center flex-col gap-16 py-16 px-6 relative">
+        <main 
+          className="w-full flex items-center justify-center flex-col py-16 px-6 relative"
+          style={{ gap: `${gap}px` }}
+        >
           <HeroScene config={props.scenes.hero} />
           <AboutScene config={props.scenes.about} />
           <ExperienceScene config={props.scenes.experience} />
