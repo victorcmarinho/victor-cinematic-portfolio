@@ -1,5 +1,6 @@
 import { Composition } from 'remotion';
 import { FullJourneySequence } from './scenes/FullJourneySequence';
+import { AnatomyOrchestrator } from './scenes/AnatomyOrchestrator';
 import { cinematicSchema } from './config/cinematicConfig';
 import './index.css';
 
@@ -34,6 +35,14 @@ export const RemotionRoot: React.FC = () => {
             finalScrollY: -2200,
           }
         }}
+      />
+      <Composition
+        id="SiteAnatomyProcess"
+        component={AnatomyOrchestrator}
+        durationInFrames={900}
+        fps={60}
+        width={1920}
+        height={1080}
       />
     </>
   );
